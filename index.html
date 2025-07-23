@@ -68,6 +68,8 @@
 </head>
 <body>
   <h1>📼 BurikCam Pro Max</h1>
+
+  <button onclick="startCamera()" style="margin: 10px 0;">▶️ Mulai Kamera</button>
   <video id="video" autoplay playsinline muted></video>
   <canvas id="canvas" width="160" height="120" style="display:none;"></canvas>
 
@@ -132,7 +134,8 @@
         currentStream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = currentStream;
       } catch (e) {
-        alert("Gagal akses kamera: " + e.message);
+        console.error("❌ Kamera Error:", e);
+        alert("Gagal akses kamera: " + e.name + " - " + e.message);
       }
     }
 
@@ -146,6 +149,7 @@
     }
 
     function applyZoom(level) {
+      if (!currentStream) return;
       const track = currentStream.getVideoTracks()[0];
       const capabilities = track.getCapabilities();
       if (capabilities.zoom) {
@@ -156,6 +160,7 @@
     }
 
     function takePhoto() {
+      if (!currentStream) return;
       const w = video.videoWidth;
       const h = video.videoHeight;
       canvas.width = w;
@@ -169,6 +174,8 @@
     }
 
     function recordVideo() {
+      if (!currentStream) return;
+
       if (mediaRecorder && mediaRecorder.state === "recording") {
         mediaRecorder.stop();
         return;
@@ -191,11 +198,8 @@
       };
 
       mediaRecorder.start();
-      setTimeout(() => mediaRecorder.stop(), 5000); // 5 detik auto-stop
+      setTimeout(() => mediaRecorder.stop(), 5000);
     }
-
-    // Start default
-    startCamera();
   </script>
 </body>
 </html>
